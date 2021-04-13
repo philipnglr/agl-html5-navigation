@@ -1,0 +1,117 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    height: 100%;
+    background-size: cover;
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+}
+@keyframes blink{
+    0%  { opacity: .25;}
+    25% { opacity: .5;}
+    50% { opacity: .1;}
+    75% { opacity: .5;}
+    100%{ opacity: .25;}
+}
+
+body {
+
+    .no-pd {
+        padding: 0px !important;
+    }
+
+    .no-mg {
+        margin: 0px !important;
+    }
+
+    //font sizes:
+    .fs-46 {
+        font-size: 46px;
+    }
+    .fs-32 {
+        font-size: 32px;
+    }
+    .fs-22 {
+        font-size: 22px;
+    }
+    .fs-18 {
+        font-size: 18px;
+    }
+
+    //font weights:
+    .fw-extrabold {
+        font-weight: 700;
+    }
+    .fw-bold {
+        font-weight: 500;
+    }
+    .fw-normal {
+        font-weight: 300;
+    }
+
+    .block {
+        display: block;
+    }
+
+    .bottom {
+        position: fixed !important;
+        bottom: 0 !important;
+        width: 100% !important;
+    }
+
+    overflow: hidden;
+
+    .speed {
+        font-size: 8rem;
+    }
+    
+    .log {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 1080px;
+        background: white;
+        font-size: 1.5rem;
+    }
+
+    .main-directions-container {
+        margin: 36px;
+        margin-bottom: 0px;
+        padding-top: 36px;
+        padding-bottom: 36px;
+        padding-left: 48px;
+        padding-right: 48px;
+        background: rgba(20, 34, 63, 0.5);
+        backdrop-filter: blur(13px);
+        border-radius: 14px 14px 0px 0px;
+    }
+
+    .next-directions-container {
+        margin: 36px;
+        margin-top: 0px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 48px;
+        padding-right: 48px;
+        background: rgba(20, 34, 63, 0.3);
+        backdrop-filter: blur(13px);
+        border-radius: 0px 0px 14px 14px;
+    }
+
+    .navi-info {
+        margin: 36px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-top: 20px;
+        padding-bottom: 0px;
+        padding-left: 48px;
+        padding-right: 48px;
+        background: #14223F;
+        backdrop-filter: blur(13px);
+        border-radius: 14px 14px 0px 0px;
+    }
+
+}
