@@ -61,30 +61,23 @@ export function init() {
     });
 }
 
-/*export function simulate() {
-    console.log('SIMULATE');
-    var counter = 0;
-    var interval = setInterval(function() {
-        counter ++;
-        if( page.speed < 60 ) {
-            page.speed += Math.floor(Math.random()*10);
-            if( page.rpm.percent < 80 ) {
-                page.rpm.percent += Math.floor(Math.random()*25);
-            } else {
-                page.rpm.percent = 40;
-            }
-        } else if (Math.random() > 0.5 ) {
-            page.speed += Math.floor(Math.random()*10);
-            page.rpm.percent = Math.min(80, Math.floor(Math.random()*90));
-        } else {
-            page.speed -= Math.floor(Math.random()*10);
-            page.rpm.percent = Math.min(80, Math.floor(Math.random()*90));
-        }
+export function initMap() {
+	var mapcontainer = document.getElementById('mapid');
+	if (mapcontainer) {
+		var map = L.map(mapcontainer).setView({lon: 0, lat: 0}, 2);
 
-        show();
+		// add the OpenStreetMap tiles
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+		}).addTo(map);
 
-        if( counter > 600 ) {
-            clearInterval(interval);
-        }
-    }, 1000);
-}*/
+		// show the scale bar on the lower left corner
+		L.control.scale().addTo(map);
+
+		// show a marker on the map
+		L.marker({lon: 0, lat: 0}).bindPopup('The center of the world').addTo(map);
+	} else {
+		console.log("Konnte div nicht finden");
+	}
+}

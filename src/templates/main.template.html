@@ -1,57 +1,113 @@
 
-<div class="container no-pd no-mg">
+<div class="wrapper no-pd no-mg">
 
-    <div class="row">
-        <div class="col-4 main-directions-container">
-            <div class="row">
-                <div class="col-4">
-                    <span>--></span>
-                </div>
-                <div class="col-8">
-                    <span class="fs-46 fw-extrabold">5,4 km</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <span class="fs-22 fw-normal block">gerade aus</span>
-                    <span class="fs-22 fw-normal block">Alteburgstraße</span>
-                </div>
-            </div>
-        </div>
+    <!--MAP-->
+    <div id="mapid" class="background no-pd no-mg mapdiv">
+        <!--INSERT MAP HERE-->
     </div>
 
-    <div class="row">
-        <div class="col-4 next-directions-container">
-            <div class="row">
-                <div class="col-3">
-                    <span><--</span>
+    <!--CONTENT-->
+    <div class="content no-mg">
+        
+        <!--1. Row-->
+        <div class="row justify-content-between">
+            
+            <!--Main-Directions-Container-->
+            <div class="col-4 main-directions-container">
+                <div class="row">
+                    <div class="col-4">
+                        <span>--></span>
+                    </div>
+                    <div class="col-8">
+                        <span class="fs-46 fw-extrabold">5,4 km</span>
+                    </div>
                 </div>
-                <div class="col-9">
-                    <span class="fs-18 fw-normal block">danach links abbiegen</span>
-                    <span class="fs-18 fw-normal block">Hauptstraße</span>
+                <div class="row">
+                    <div class="col-12">
+                        <span class="fs-22 fw-normal block">gerade aus</span>
+                        <span class="fs-22 fw-normal block">Alteburgstraße</span>
+                    </div>
+                </div>
+            </div>
+
+            <!--Close-Button-->
+            <div class="col-2 close-btn">
+                <a class="btn" href="start.template.html">
+                    <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M30.375 3.62125L27.3788 0.625L15.5 12.5038L3.62125 0.625L0.625 3.62125L12.5038 15.5L0.625 27.3788L3.62125 30.375L15.5 18.4962L27.3788 30.375L30.375 27.3788L18.4962 15.5L30.375 3.62125Z" fill="#B31010"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+
+        <!--2. Row-->
+        <div class="row justify-content-between">
+            
+            <!--Next-Directions-Container-->
+            <div class="col-4 next-directions-container">
+                <div class="row">
+                    <div class="col-3">
+                        <span><--</span>
+                    </div>
+                    <div class="col-9">
+                        <span class="fs-18 fw-normal block">danach links abbiegen</span>
+                        <span class="fs-18 fw-normal block">Hauptstraße</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <div class="row bottom">
-        <div class="col-5 navi-info bottom">
-            <div class="row">
-                <div class="col-4">
-                    <span class="fs-32 fw-bold block">4:45 AM</span>
-                    <span class="fs-22 fw-normal block">Ankunft</span>
+        <!--3. Row-->
+        <div class="row justify-content-between">
+
+            <!--Spacer Col-->
+            <div class="col"></div>
+            
+            <!--Zoom-Buttons-->
+            <div class="col-2">
+                <div class="close-btn">
+                    <a class="zoom-btn" href="">
+                        <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.7791 30.4716H18.6925V18.6925H30.4716V11.7791H18.6925V0H11.7791V11.7791H0V18.6925H11.7791V30.4716Z" fill="#14223F"/>
+                        </svg>
+                    </a>
                 </div>
-                <div class="col-4">
-                    <span class="fs-32 fw-bold block">1:39 h</span>
-                    <span class="fs-22 fw-normal block">Dauer</span>
-                </div>
-                <div class="col-4">
-                    <span class="fs-32 fw-bold block">81 km</span>
-                    <span class="fs-22 fw-normal block">Distanz</span>
+                <div class="close-btn">
+                    <a class="zoom-btn" href="">
+                        <svg width="21" height="7" viewBox="0 0 21 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.2997 0H0V6.56108H20.2997V0Z" fill="#14223F"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
+
+
+        <!--Bottom Row-->
+        <div class="row align-items-end justify-content-start">
+
+            <!--Navi-Info-->
+            <div class="col-6 navi-info bottom">
+                <div class="row">
+                    <div class="col">
+                        <span class="fs-32 fw-bold block">4:45 AM</span>
+                        <span class="fs-22 fw-normal block">Ankunft</span>
+                    </div>
+                    <div class="col">
+                        <span class="fs-32 fw-bold block">1:39 h</span>
+                        <span class="fs-22 fw-normal block">Dauer</span>
+                    </div>
+                    <div class="col">
+                        <span class="fs-32 fw-bold block">81 km</span>
+                        <span class="fs-22 fw-normal block">Distanz</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 </div>
