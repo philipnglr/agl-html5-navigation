@@ -36,8 +36,8 @@
         "zip-webpack-plugin": "^3.0.0"
     },
     "dependencies": {
-        "mustache": "^3.1.0",
+        "agl-js-api": "https://github.com/AGL-web-applications/agl-js-api.git#master",
         "bootstrap": "4.4.1",
-        "agl-js-api": "https://github.com/AGL-web-applications/agl-js-api.git#master"
+        "mustache": "^3.1.0"
     }
 }
