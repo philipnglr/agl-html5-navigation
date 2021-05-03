@@ -17,12 +17,14 @@
 import * as app from './js/app';
 import { api } from 'agl-js-api';
 
-import * as leaflet from './leaflet/leaflet';
+import * as L from './leaflet/leaflet';
+import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine';
 import * as map from './js/map'
 
 /* CSS */
 import './styles/app.scss';
 import './leaflet/leaflet.css';
+import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.css';
 
 
 window.app = app;

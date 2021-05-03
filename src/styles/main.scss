@@ -9,6 +9,10 @@ html {
     overflow: hidden;
 }
 
+.leaflet-left {
+    left: 650px !important;
+}
+
 .mapdiv {
     height: 800px;
     width: 1170px;
@@ -21,6 +25,9 @@ html {
 }
 
 .content {
+    //to comment out later!!!!
+    display: none;
+    
     position: relative;
     z-index: 100;
 }
@@ -189,4 +196,29 @@ body {
         margin-right: 36px;
     }
 
+}
+
+
+//leaflet specific styling
+
+.leaflet-popup-tip-container {
+    display: none !important;
+}
+
+.street-label div {
+    color: white;
+    font-size: 22px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(13px);
+    border-radius: 100px;
+    box-shadow: none;
+}
+
+.street-label div div {
+    background: transparent;
+    backdrop-filter: none;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    margin-left: 22px;
+    margin-right: 22px;
 }
