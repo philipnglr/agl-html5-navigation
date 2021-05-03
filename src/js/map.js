@@ -58,9 +58,9 @@ export function init() {
 				}).bindPopup(popup).openPopup();
 				return startMarker;
 			} else {
-			return L.marker(wp.latLng, {
-				icon: marker
-			});
+				return L.marker(wp.latLng, {
+					icon: marker
+				});
 			}
 		},
 
@@ -98,7 +98,6 @@ export function init() {
 	//setup marker
 	//marker = L.marker(map.getCenter(), {icon: marker}).addTo(map);
 	
-
 
 	// zoom in function
 	$(zoomInBtn).click(function(){
