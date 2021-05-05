@@ -9,15 +9,6 @@ html {
     overflow: hidden;
 }
 
-.leaflet-left {
-    left: 650px !important;
-}
-
-.mapdiv {
-    height: 800px;
-    width: 1170px;
-}
-
 .wrapper {
     position: relative;
     width: 100%;
@@ -26,7 +17,7 @@ html {
 
 .content {
     //to comment out later!!!!
-    display: none;
+    //display: none;
     
     position: relative;
     z-index: 100;
@@ -36,12 +27,9 @@ html {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -100;
-    
-    //Test-BG
-    background-image: url("../images/test.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
 }
 
 .bottom {
@@ -54,10 +42,6 @@ html {
     float: right !important;
 }
 
-svg { 
-    width: 100% !important; 
-    height: 100% !important; 
-}
 
 .row {
     margin-left: 0 !important;
@@ -195,11 +179,14 @@ body {
         margin-top: 45px;
         margin-right: 36px;
     }
-
 }
 
 
 //leaflet specific styling
+
+.leaflet-left {
+    left: 650px !important;
+}
 
 .leaflet-popup-tip-container {
     display: none !important;
@@ -221,4 +208,8 @@ body {
     margin-bottom: 6px;
     margin-left: 22px;
     margin-right: 22px;
+} 
+
+.leaflet-routing-container {
+    color: black;
 }

@@ -1,5 +1,7 @@
 export function init() {
 	
+	/* ALL VARIABLES */
+
 	var mapcontainer = document.getElementById('mapid');
 	var zoomInBtn = document.getElementById('in');
 	var zoomOutBtn = document.getElementById('out');
@@ -8,39 +10,63 @@ export function init() {
 	var currentLocation = { //Reutlingen
 		lon: 9.20427,
 		lat: 48.49144
-	}
+	};
 	var street = "Hauptstraße";
 
+	var destination = { //Stuttgart
+		lon: 9.192,
+		lat: 48.783
+	};
+
 	// custom marker-icon
-	var marker = new L.icon({
+	var startIcon = new L.icon({
 		iconUrl: '../images/marker.png',
 
-		iconSize: [74, 74],
-		iconAnchor: [37, 37],
+		iconSize: [62, 62],
+		iconAnchor: [31, 31],
 		popupAnchor: [0, 140]
 	});
+	var destinationIcon = new L.icon({
+		iconUrl: '../images/destination.png',
+
+		iconSize: [62, 62],
+		iconAnchor: [14, 62],
+	});
+
+	var startMarker, destinationMarker;
+
+	var tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png';
+	//alternatives: 
+	//https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png 
+	//https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png
+	//https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+  
+    var attr = 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+	//alternatives:
+	//'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+
+	var maxZoomLvl = 20;
+	var viewZoomLvl = 17;
+
+	
+
+
+
+
+	/* MAP & ROUTE SETUP */
 	
 	// setup map position and zoom (if html div loaded properly)
 	if (mapcontainer) {
-		map = L.map(mapcontainer, {zoomControl: false}).setView(currentLocation, 13);
+		map = L.map(mapcontainer, {zoomControl: false}).setView(currentLocation, viewZoomLvl);
 
-		// add the CartoDB tiles
-		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+		// add tiles
+		L.tileLayer(tileUrl, {
+			maxZoom: maxZoomLvl,
+			attribution: attr,
 		}).addTo(map);
 
-		// add the OpenStreetMap tiles
-		/*L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-		  }).addTo(map);*/
-
-		// show the scale bar on the lower left corner
-		//L.control.scale().addTo(map);
-
 	} else {
-		console.log("Konnte div nicht finden");
+		console.log("Konnte div mapid nicht finden.");
 	}
 	
 	//setup streetname tooltip
@@ -49,55 +75,63 @@ export function init() {
 	//setup scale
 	var scale = L.control.scale().addTo(map);
 	
-	var route = L.Routing.control({
-
+	//Route zeichnen
+	var routing = L.Routing.control({
+		waypoints: [
+			L.latLng(currentLocation.lat, currentLocation.lon),
+			L.latLng(destination.lat, destination.lon)
+		],
 		createMarker: function(i, wp, nWps) {
-			if (i === 0 || i === nWps - 1) {
-				var startMarker = L.marker(wp.latLng, {
-					icon: marker
-				}).bindPopup(popup).openPopup();
-				return startMarker;
-			} else {
-				return L.marker(wp.latLng, {
-					icon: marker
+			if (i === 0) {
+				startMarker = L.marker(wp.latLng, {
+					draggable: false,
+					bounceOnAdd: true,
+					bounceOnAddOptions: {
+						duration: 1000,
+						height: 800,
+						function() {	
+							(bindPopup(popup).openOn(map))
+						}
+					},
+					icon: startIcon,
 				});
+				return startMarker;
+			}
+			else if (i === 0 || i === nWps - 1) {
+				destinationMarker = L.marker(wp.latLng, {
+					icon: destinationIcon,
+				});
+				return destinationMarker;
+			} else {
+				return null;
 			}
 		},
 
-		waypoints: [
-			L.latLng(currentLocation.lat, currentLocation.lon), //Reutlingen
-			L.latLng(48.783, 9.192) //Stuttgart
-		],
-
+		routeWhileDragging: false,
+		reverseWaypoints: false,
+		showAlternatives: false,
 		lineOptions: {
 			styles: [
-			  {
-				color: "blue",
-				//opacity: 0.6,
-				weight: 4
-			  }
+				{color: '#00A4E1', opacity: 1, weight: 11},
 			]
-		  },
-
-		addWaypoints: false,
-		draggableWaypoints: false,
-		fitSelectedRoutes: false,
-		showAlternatives: false,
-		
+		},
 	}).addTo(map);
+	L.Routing.errorControl(routing).addTo(map);
+	startMarker.bindPopup(popup).openPopup();
 	
-	route.show();
 
-	popup.openPopup();
+	//map the routing steps to custom div
+	// var routingControlContainer = routing.getContainer();
+	// var controlContainerParent = routingControlContainer.parentNode;
+	// controlContainerParent.removeChild(routingControlContainer);
+	// var itineraryDiv = document.getElementById('coming-up-direction');
+	// itineraryDiv.appendChild(routingControlContainer);
+	
+	
 
-	var onLocationFound = function(e){
-		marker.setLatLng(e.latlng);
-		map.setView(marker.getLatLng(),map.getZoom());
-	};
-	
-	//setup marker
-	//marker = L.marker(map.getCenter(), {icon: marker}).addTo(map);
-	
+
+
+	/* ZOOM BTNS SETUP */
 
 	// zoom in function
 	$(zoomInBtn).click(function(){
@@ -110,32 +144,3 @@ export function init() {
 		map.setZoom(map.getZoom() - 1)
 	});
 }
-
-
-/*export function simulate() {
-    console.log('SIMULATE');
-    var counter = 0;
-    var interval = setInterval(function() {
-        counter ++;
-        if( page.speed < 60 ) {
-            page.speed += Math.floor(Math.random()*10);
-            if( page.rpm.percent < 80 ) {
-                page.rpm.percent += Math.floor(Math.random()*25);
-            } else {
-                page.rpm.percent = 40;
-            }
-        } else if (Math.random() > 0.5 ) {
-            page.speed += Math.floor(Math.random()*10);
-            page.rpm.percent = Math.min(80, Math.floor(Math.random()*90));
-        } else {
-            page.speed -= Math.floor(Math.random()*10);
-            page.rpm.percent = Math.min(80, Math.floor(Math.random()*90));
-        }
-
-        show();
-
-        if( counter > 600 ) {
-            clearInterval(interval);
-        }
-    }, 1000);
-}*/
