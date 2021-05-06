@@ -5,17 +5,32 @@ export function init() {
 	var mapcontainer = document.getElementById('mapid');
 	var zoomInBtn = document.getElementById('in');
 	var zoomOutBtn = document.getElementById('out');
+	var arrivalTimeContainer = document.getElementById('arrivalTime');
+	var durationContainer = document.getElementById('duration');
+	var distanceContainer = document.getElementById('distance');
+
 	var map;
 	
-	var currentLocation = { //Reutlingen
+	
+	var currentLocation = { 
+		//Reutlingen
 		lon: 9.20427,
 		lat: 48.49144
 	};
 	var street = "Hauptstraße";
 
-	var destination = { //Stuttgart
-		lon: 9.192,
-		lat: 48.783
+	var destination = { 
+		//Konrad-Adenauer-Straße Esso Tankstelle, Reutlingen 
+		// lon: 9.202856828264528,
+		// lat: 48.492313456888866,
+
+		//Stuttgart
+		// lon: 9.192,
+		// lat: 48.783,
+		
+		//Berlin
+		lon: 13.404954,
+		lat: 52.520008,
 	};
 
 	// custom marker-icon
@@ -120,6 +135,32 @@ export function init() {
 	startMarker.bindPopup(popup).openPopup();
 	
 
+
+
+
+	/* FILL CUSTOM INFO-BOXES*/
+
+	//setup arrival time, duration & distance 
+	routing.on('routesfound', function(e) {
+		var routes = e.routes;
+		var summary = routes[0].summary;
+		var totalTime = secondsToHm(summary.totalTime);
+		
+		// setup distance
+		if (summary.totalDistance > 1000) {
+			distanceContainer.innerHTML = Math.round((summary.totalDistance / 1000) * 10) / 10 + " km";
+		} else {
+			distanceContainer.innerHTML = Math.round(summary.totalDistance) + " m";
+		}
+
+		//setup duration
+		durationContainer.innerHTML = formatDuration(totalTime.hours, totalTime.minutes, totalTime.seconds);
+
+		//setup time of arrival
+		arrivalTimeContainer.innerHTML = getDate(totalTime.hours, totalTime.minutes, totalTime.seconds);
+	});
+
+
 	//map the routing steps to custom div
 	// var routingControlContainer = routing.getContainer();
 	// var controlContainerParent = routingControlContainer.parentNode;
@@ -143,4 +184,54 @@ export function init() {
 	$(zoomOutBtn).click(function(){
 		map.setZoom(map.getZoom() - 1)
 	});
+}
+
+
+function secondsToHm(d) {
+	d = Number(d);
+	const h = Math.floor(d / 3600);
+	const m = Math.floor(d % 3600 / 60);
+	const s = Math.floor(d);
+	var res = {
+		hours: h,
+		minutes: m, 
+		seconds: s
+	}
+	return res;
+}
+
+
+function formatDuration(hours, minutes, seconds) {
+	if (hours == 0 && minutes != 0) {
+		return minutes + " min";
+	} else if (hours == 0 && minutes < 10) {
+		return minutes + ":" + seconds + " s";
+	} else {
+		return hours + ":" + minutes + " h";
+	}
+}
+
+
+function getDate(hours, minutes, seconds) {
+	var date = new Date();
+	var h = date.getHours();
+	var m = date.getMinutes();
+	var s = date.getSeconds();
+
+	h = h + hours;
+	m = m + minutes;
+	if (m > 59) {
+		h++;
+		m = m - 60;
+	}
+	s = s + seconds; 
+	if (s > 59) {
+		m++;
+		s = s - 60;
+		if (m > 59) {
+			h++;
+			m = m - 60;
+		}
+	}
+	return(h + ":" + m + " Uhr");
 }
