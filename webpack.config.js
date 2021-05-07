@@ -60,7 +60,7 @@ module.exports = {
         }),
         new ZipPlugin({
             path: __dirname + '/package',
-            filename: 'dashboard',
+            filename: 'navigation',
             extension: 'wgt',
             exclude: []
         })

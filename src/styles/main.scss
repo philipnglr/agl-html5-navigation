@@ -211,5 +211,21 @@ body {
 } 
 
 .leaflet-routing-container {
-    color: black;
+    color: white;
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+
+.leaflet-bar {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.leaflet-routing-alt h2,
+.leaflet-routing-alt h3 {
+    display: none;
+}
+
+.leaflet-routing-alt table tbody tr td:first-child {
+    filter: invert(100%);
 }

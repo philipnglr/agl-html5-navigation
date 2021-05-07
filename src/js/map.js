@@ -20,14 +20,17 @@ export function init() {
 	var street = "Hauptstraße";
 
 	var destination = { 
+		//--> super short route
 		//Konrad-Adenauer-Straße Esso Tankstelle, Reutlingen 
 		// lon: 9.202856828264528,
 		// lat: 48.492313456888866,
 
+		//--> medium route
 		//Stuttgart
 		// lon: 9.192,
 		// lat: 48.783,
 		
+		//--> long route
 		//Berlin
 		lon: 13.404954,
 		lat: 52.520008,
@@ -83,6 +86,15 @@ export function init() {
 	} else {
 		console.log("Konnte div mapid nicht finden.");
 	}
+
+	// setup compass
+	var comp = new L.Control.Compass({autoActive: true, showDigit:true, position:'bottomright'});
+	map.addControl(comp);
+
+	// Calculate the offset
+	var offset = map.getSize().x*0.14;
+	// Then move the map
+	map.panBy(new L.Point(-offset, 0), {animate: false});
 	
 	//setup streetname tooltip
 	var popup = L.popup({closeButton: false, className: "street-label"}).setContent(street);
@@ -162,11 +174,11 @@ export function init() {
 
 
 	//map the routing steps to custom div
-	// var routingControlContainer = routing.getContainer();
-	// var controlContainerParent = routingControlContainer.parentNode;
-	// controlContainerParent.removeChild(routingControlContainer);
-	// var itineraryDiv = document.getElementById('coming-up-direction');
-	// itineraryDiv.appendChild(routingControlContainer);
+	var routingControlContainer = routing.getContainer();
+	var controlContainerParent = routingControlContainer.parentNode;
+	controlContainerParent.removeChild(routingControlContainer);
+	var itineraryDiv = document.getElementById('coming-up-direction');
+	itineraryDiv.appendChild(routingControlContainer);
 	
 	
 
