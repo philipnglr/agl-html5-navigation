@@ -161,7 +161,7 @@ body {
         height: 82px;
         float: right !important;
         margin-top: 45px;
-        margin-right: 36px;
+        margin-right: 38px;
       }
 
     .zoom-btn {
@@ -177,15 +177,21 @@ body {
         height: 82px;
         float: right !important;
         margin-top: 45px;
-        margin-right: 36px;
+        margin-right: 38px;
     }
+
+    .compass {
+        float: right !important;
+        margin-bottom: 36px;
+        margin-right: 14px;
+    } 
 }
 
 
 //leaflet specific styling
 
 .leaflet-control-scale {
-    left: 735px !important;
+    left: 900% !important;
 }
 
 .leaflet-popup-tip-container {

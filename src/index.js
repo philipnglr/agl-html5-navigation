@@ -13,38 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* JS */
-// import * as app from './js/app';
-// import { api } from 'agl-js-api';
-
-// /* CSS */
-// import './styles/app.scss';
-// import './leaflet/leaflet.css';
-// import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.css';
-// import './compass/leaflet-compass.css';
-
-// /* custom JS */
-// import * as leaflet from './leaflet/leaflet';
-// import * as map from './js/map'
-// import './compass/leaflet-compass';
-// import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine';
-
-
 
 /* JS */
 import * as app from './js/app';
 import { api } from 'agl-js-api';
-
-import * as leaflet from './leaflet/leaflet';
-import * as map from './js/map'
-import './compass/leaflet-compass'; //if compile error from chokidar (C:\): Error: EBUSY: resource busy or locked --> adapt package.json, re-install npm etc.
+import './leaflet/leaflet';
+import * as map from './js/map';
 import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine'; // routing machine for drawing route etc.
+//import './js/rotate-marker';
 
 /* CSS */
 import './styles/app.scss'; //import style sheets
 import './leaflet/leaflet.css';
 import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.css';
-import './compass/leaflet-compass.css';
 
 
 

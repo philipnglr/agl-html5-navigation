@@ -87,9 +87,18 @@ export function init() {
 		console.log("Konnte div mapid nicht finden.");
 	}
 
+
+	//auto-rotate map
+	var deg = 120;
+	var compass = document.getElementById('compass_static');
+	map.setBearing(deg); // TODO
+	compass.style.transform = 'rotate(' + deg + 'deg)';
+
+
+
 	// setup compass
-	var comp = new L.Control.Compass({autoActive: true, showDigit:true, position:'bottomright'});
-	map.addControl(comp);
+	// var comp = new L.Control.Compass({autoActive: true, showDigit:true, position:'bottomright'});
+	// map.addControl(comp);
 
 	// Calculate the offset
 	var offset = map.getSize().x*0.14;
@@ -146,7 +155,6 @@ export function init() {
 	L.Routing.errorControl(routing).addTo(map);
 	startMarker.bindPopup(popup).openPopup();
 	
-
 
 
 
@@ -229,6 +237,7 @@ function getDate(hours, minutes, seconds) {
 	var h = date.getHours();
 	var m = date.getMinutes();
 	var s = date.getSeconds();
+	var res = "";
 
 	h = h + hours;
 	m = m + minutes;
@@ -245,5 +254,12 @@ function getDate(hours, minutes, seconds) {
 			m = m - 60;
 		}
 	}
-	return(h + ":" + m + " Uhr");
+
+	if (m < 10) {
+	 	res = h + ":0" + m + " Uhr";
+	} else {
+		res = h + ":" + m + " Uhr";
+	}
+
+	return res;
 }
