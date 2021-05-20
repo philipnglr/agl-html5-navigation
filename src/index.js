@@ -17,10 +17,13 @@
 /* JS */
 import * as app from './js/app';
 import { api } from 'agl-js-api';
-import './leaflet/leaflet';
+import './leaflet/leaflet-src';
 import * as map from './js/map';
 import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine'; // routing machine for drawing route etc.
 //import './js/rotate-marker';
+import './leaflet-routing-machine-3.2.12/examples/Control.Geocoder';
+import './js/rotate-marker';
+import './js/leaflet.rotatedMarker';
 
 /* CSS */
 import './styles/app.scss'; //import style sheets

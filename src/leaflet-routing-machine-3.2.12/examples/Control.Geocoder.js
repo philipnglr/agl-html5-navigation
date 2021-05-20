@@ -3,7 +3,7 @@
 	var L;
 	if (typeof define === 'function' && define.amd) {
 		// AMD
-		define(['leaflet'], factory);
+		//define(['leaflet'], factory);
 	} else if (typeof module !== 'undefined') {
 		// Node/CommonJS
 		L = require('leaflet');

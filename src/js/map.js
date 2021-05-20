@@ -1,5 +1,5 @@
+
 export function init() {
-	
 	/* ALL VARIABLES */
 
 	var mapcontainer = document.getElementById('mapid');
@@ -8,10 +8,14 @@ export function init() {
 	var arrivalTimeContainer = document.getElementById('arrivalTime');
 	var durationContainer = document.getElementById('duration');
 	var distanceContainer = document.getElementById('distance');
+	var compass = document.getElementById('compass_static');
 
 	var map;
-	
-	
+
+	var offset;
+
+	var deg = 60;
+
 	var currentLocation = { 
 		//Reutlingen
 		lon: 9.20427,
@@ -58,65 +62,52 @@ export function init() {
 	//https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png 
 	//https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png
 	//https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
-  
-    var attr = 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+
+	var attr = 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
 	//alternatives:
 	//'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 
 	var maxZoomLvl = 20;
 	var viewZoomLvl = 17;
 
-	
-
-
-
-
 	/* MAP & ROUTE SETUP */
 	
 	// setup map position and zoom (if html div loaded properly)
 	if (mapcontainer) {
-		map = L.map(mapcontainer, {zoomControl: false}).setView(currentLocation, viewZoomLvl);
+		map = L.map(mapcontainer, {zoomControl: false, rotate: true}).setView(currentLocation, viewZoomLvl);
 
 		// add tiles
 		L.tileLayer(tileUrl, {
 			maxZoom: maxZoomLvl,
 			attribution: attr,
 		}).addTo(map);
-
+	
+		
 	} else {
 		console.log("Konnte div mapid nicht finden.");
 	}
-
-
-	//auto-rotate map
-	var deg = 120;
-	var compass = document.getElementById('compass_static');
-	map.setBearing(deg); // TODO
-	compass.style.transform = 'rotate(' + deg + 'deg)';
-
-
-
-	// setup compass
-	// var comp = new L.Control.Compass({autoActive: true, showDigit:true, position:'bottomright'});
-	// map.addControl(comp);
-
-	// Calculate the offset
-	var offset = map.getSize().x*0.14;
+	
+	// calculate the offset
+	offset = map.getSize().x*0.14;
 	// Then move the map
 	map.panBy(new L.Point(-offset, 0), {animate: false});
 	
-	//setup streetname tooltip
+	
+	// setup streetname tooltip
 	var popup = L.popup({closeButton: false, className: "street-label"}).setContent(street);
 	
-	//setup scale
+	// setup scale
 	var scale = L.control.scale().addTo(map);
 	
-	//Route zeichnen
+	// draw route
 	var routing = L.Routing.control({
 		waypoints: [
 			L.latLng(currentLocation.lat, currentLocation.lon),
 			L.latLng(destination.lat, destination.lon)
 		],
+
+		//geocoder: L.Control.Geocoder.nominatim(),
+
 		createMarker: function(i, wp, nWps) {
 			if (i === 0) {
 				startMarker = L.marker(wp.latLng, {
@@ -151,16 +142,84 @@ export function init() {
 				{color: '#00A4E1', opacity: 1, weight: 11},
 			]
 		},
+
 	}).addTo(map);
 	L.Routing.errorControl(routing).addTo(map);
 	startMarker.bindPopup(popup).openPopup();
 	
 
+	// get route info
+
+	var deg = 60;
+	
+	var allCoords;
+	var instr;
+	var nextStepCoords = null;
+
+	routing.on('routeselected', function(e) {
+		allCoords = e.route.coordinates;
+			instr = e.route.instructions;
+			console.log(allCoords);
+			console.log(instr);
+
+			nextStepCoords = getNextStepCoords(instr, allCoords);
+			console.log(nextStepCoords);
+
+			deg = getAngle(currentLocation, nextStepCoords);
+			console.log(deg);
+
+			var testMarker = new L.marker(nextStepCoords, {icon: startIcon}).addTo(map);
+			startMarker.setLatLng(currentLocation);
+
+			var clicked = false;
+			map.setBearing(360 - deg); // TODO
+			compass.style.transform = 'rotate(' + (360 - deg) + 'deg)';
+
+			compass.onclick = function() {
+				if (!clicked) {
+					map.setBearing(0); // TODO
+					map.setView(currentLocation, viewZoomLvl);
+					compass.style.WebkitTransitionDuration="1s";
+					compass.style.transform = 'rotate(' + 0 + 'deg)';
+					startMarker.setRotationAngle(deg);
+					startMarker.setLatLng(currentLocation);
+					clicked = true;
+				} else {
+					map.setBearing(360 - deg); // TODO
+					map.setView(currentLocation, viewZoomLvl);
+					compass.style.WebkitTransitionDuration="1s";
+					compass.style.transform = 'rotate(' + (360 - deg) + 'deg)';
+					startMarker.setRotationAngle(0);
+					startMarker.setLatLng(currentLocation);
+					clicked = false;
+				}
+			}
+	});
+
+	// var clicked = false;
+	// map.setBearing(360 - deg); // TODO
+	// compass.style.transform = 'rotate(' + deg + 'deg)';
+
+	// compass.onclick = function() {
+	// 	if (!clicked) {
+	// 		map.setBearing(0); // TODO
+	// 		map.setView(currentLocation, viewZoomLvl);
+	// 		compass.style.WebkitTransitionDuration="1s";
+	// 		compass.style.transform = 'rotate(' + 0 + 'deg)';
+	// 		clicked = true;
+	// 	} else {
+	// 		map.setBearing(deg); // TODO
+	// 		map.setView(currentLocation, viewZoomLvl);
+	// 		compass.style.WebkitTransitionDuration="1s";
+	// 		compass.style.transform = 'rotate(' + deg + 'deg)';
+	// 		clicked = false;
+	// 	}
+	// }
 
 
 	/* FILL CUSTOM INFO-BOXES*/
 
-	//setup arrival time, duration & distance 
+	// setup arrival time, duration & distance 
 	routing.on('routesfound', function(e) {
 		var routes = e.routes;
 		var summary = routes[0].summary;
@@ -173,37 +232,69 @@ export function init() {
 			distanceContainer.innerHTML = Math.round(summary.totalDistance) + " m";
 		}
 
-		//setup duration
+		// setup duration
 		durationContainer.innerHTML = formatDuration(totalTime.hours, totalTime.minutes, totalTime.seconds);
 
-		//setup time of arrival
-		arrivalTimeContainer.innerHTML = getDate(totalTime.hours, totalTime.minutes, totalTime.seconds);
+		// setup time of arrival
+		arrivalTimeContainer.innerHTML = formatArrivalTime(totalTime.hours, totalTime.minutes, totalTime.seconds);
 	});
 
 
-	//map the routing steps to custom div
+	// map the routing steps to custom div
 	var routingControlContainer = routing.getContainer();
 	var controlContainerParent = routingControlContainer.parentNode;
 	controlContainerParent.removeChild(routingControlContainer);
 	var itineraryDiv = document.getElementById('coming-up-direction');
 	itineraryDiv.appendChild(routingControlContainer);
 	
-	
-
-
 
 	/* ZOOM BTNS SETUP */
-
 	// zoom in function
 	$(zoomInBtn).click(function(){
 		map.setZoom(map.getZoom() + 1)
 	});
 
-
 	// zoom out function
 	$(zoomOutBtn).click(function(){
 		map.setZoom(map.getZoom() - 1)
 	});
+
+}
+
+function getInstrGeoJson(instr,allCoords) {
+	var formatter = new L.Routing.Formatter();
+	var instrPts = {
+		type: "FeatureCollection",
+		features: []
+	};
+	for (var i = 0; i < instr.length; ++i) {
+		var g = {
+			"type": "Point",
+			"coordinates": [allCoords[instr[i].index].lng, allCoords[instr[i].index].lat]
+		  };
+		var p = {
+			"instruction": formatter.formatInstruction(instr[i])
+		  };
+		instrPts.features.push({
+			"geometry": g,
+			"type": "Feature",
+			"properties": p
+		  });
+	}
+	console.log(instrPts);
+
+	return instrPts;
+}
+
+function getNextStepCoords(instr, allCoords) {
+	for (var i = 2; i <= 2; ++i) {
+		var res = {
+			lon : allCoords[instr[i].index].lng,
+			lat : allCoords[instr[i].index].lat
+		};
+	};
+
+	return res;
 }
 
 
@@ -232,7 +323,7 @@ function formatDuration(hours, minutes, seconds) {
 }
 
 
-function getDate(hours, minutes, seconds) {
+function formatArrivalTime(hours, minutes, seconds) {
 	var date = new Date();
 	var h = date.getHours();
 	var m = date.getMinutes();
@@ -241,10 +332,7 @@ function getDate(hours, minutes, seconds) {
 
 	h = h + hours;
 	m = m + minutes;
-	if (m > 59) {
-		h++;
-		m = m - 60;
-	}
+	
 	s = s + seconds; 
 	if (s > 59) {
 		m++;
@@ -255,6 +343,15 @@ function getDate(hours, minutes, seconds) {
 		}
 	}
 
+	if (m > 59) {
+		h++;
+		m = m - 60;
+	}
+
+	if (h > 24) {
+		h = h - 24;
+	}
+
 	if (m < 10) {
 	 	res = h + ":0" + m + " Uhr";
 	} else {
@@ -262,4 +359,42 @@ function getDate(hours, minutes, seconds) {
 	}
 
 	return res;
+}
+
+
+
+function getAngle(A, B){
+	var angle = null;
+	var latA = A.lat;
+	var lonA = A.lon;
+	var latB = B.lat;
+	var lonB = B.lon;
+
+	// 注意经度或者纬度相等 (when longitude or latitude is equal)
+	if(lonA == lonB && latA>latB ){
+		angle = Math.PI;
+	}
+	else if(lonA == lonB && latA < latB ){
+		angle = 0	;
+	}
+	else if(lonA > lonB && latA == latB ){
+		angle = -(Math.PI/2);
+	}
+	else if(lonA < lonB && latA == latB ){
+		angle = Math.PI/2	;
+	}
+
+	// 注意经度或者纬度都不相等 (Longitude and latitude are not equal)
+	else{
+		var x1 = A.lat*Math.pow(10,12);
+		var x2 = B.lat*Math.pow(10,12);
+		var y1 = A.lon*Math.pow(10,12);
+		var y2 = B.lon*Math.pow(10,12);
+		angle = Math.atan2(y2-y1,x2-x1)
+	}
+
+	angle = angle / (2 * Math.PI) * 360;
+	// angle = 360 - angle;
+
+	return angle;
 }
