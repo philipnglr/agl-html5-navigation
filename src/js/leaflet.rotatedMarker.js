@@ -11,7 +11,7 @@
         if (iconAnchor) {
             iconAnchor = (iconAnchor[0] + 'px ' + iconAnchor[1] + 'px');
         }
-        this.options.rotationOrigin = this.options.rotationOrigin || iconAnchor || 'center' ;
+        this.options.rotationOrigin = this.options.rotationOrigin; // || iconAnchor || 'center'
         this.options.rotationAngle = this.options.rotationAngle || 0;
 
         // Ensure marker keeps rotated during dragging

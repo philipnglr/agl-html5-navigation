@@ -3,6 +3,8 @@ import Mustache from 'mustache';
 
 import { lowcan } from 'agl-js-api';
 
+import * as cl from '../js/choose-location';
+
 var template;
 var page = {
     speed: 0,
@@ -33,8 +35,7 @@ export function show() {
     document.body.innerHTML = Mustache.render(template, page);
 }
 
-export function init() {
-
+export function init(template_name) {
     lowcan.list().then( function( result ) {
         console.log(result.length);
         for( var i=0;i<result.length; i++) {
@@ -52,11 +53,20 @@ export function init() {
         console.error(error);
     });
 
-    load_template('main.template.html').then(function(result) {
+    var fullName = template_name + '.template.html';
+
+    load_template(fullName).then(function(result) {
         template = result;
         Mustache.parse(template);
         show();
+        if (template_name == 'start') {
+            loadStartPage();
+        }
     }, function(error) {
         console.error('ERRROR loading main template', error);
     });
 }
+
+export function loadStartPage(){
+    cl.init();
+} 

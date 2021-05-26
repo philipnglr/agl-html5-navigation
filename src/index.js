@@ -20,9 +20,7 @@ import { api } from 'agl-js-api';
 import './leaflet/leaflet-src';
 import * as map from './js/map';
 import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine'; // routing machine for drawing route etc.
-//import './js/rotate-marker';
 import './leaflet-routing-machine-3.2.12/examples/Control.Geocoder';
-import './js/rotate-marker';
 import './js/leaflet.rotatedMarker';
 
 /* CSS */
@@ -36,9 +34,55 @@ window.app = app;
 
 api.init();
 
-$.ajax({
-    url: app.init(),
-    success: function() {
-        map.init();
-    }
-});
+// $.ajax({
+//     url: app.init('main'),
+//     success: function() {
+//         map.init();
+//     }
+// });
+
+
+// var startNavBtn;
+// var endNavBtn;
+
+//var templateDisplayed = 0;
+
+//app.init("start");
+
+// set start.template.html as default start screen
+
+
+
+
+app.init('start');
+
+
+// $.ajax({
+//     url: app.init('start'),
+//     success: function() {
+//         // start.init();
+//         startNavBtn = document.getElementById("startNavBtn");
+//         startNavBtn.onclick = function() {
+//             $.ajax({
+//                 url: app.init('main'),
+//                 success: function() {
+//                     map.init();
+//                 }
+//             });
+//         };
+//     }
+// });
+
+
+//if (templateDisplayed == 1) {
+    // $.ajax({
+    //     url: app.init('main'),
+    //     success: function() {
+    //         map.init();
+    //         endNavBtn = document.getElementById("endNavBtn");
+    //         endNavBtn.onclick('click', function() {
+    //             templateDisplayed = 0;
+    //         });
+    //     }
+    // });
+//}

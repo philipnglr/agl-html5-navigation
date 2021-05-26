@@ -1,3 +1,5 @@
+import * as app from '../js/app';
+
 
 export function init() {
 	/* ALL VARIABLES */
@@ -9,6 +11,7 @@ export function init() {
 	var durationContainer = document.getElementById('duration');
 	var distanceContainer = document.getElementById('distance');
 	var compass = document.getElementById('compass_static');
+	var endNavBtn = document.getElementById('endNavBtn');
 
 	var map;
 
@@ -26,8 +29,8 @@ export function init() {
 	var destination = { 
 		//--> super short route
 		//Konrad-Adenauer-Straße Esso Tankstelle, Reutlingen 
-		// lon: 9.202856828264528,
-		// lat: 48.492313456888866,
+		lon: 9.202856828264528,
+		lat: 48.492313456888866,
 
 		//--> medium route
 		//Stuttgart
@@ -36,8 +39,8 @@ export function init() {
 		
 		//--> long route
 		//Berlin
-		lon: 13.404954,
-		lat: 52.520008,
+		// lon: 13.404954,
+		// lat: 52.520008,
 	};
 
 	// custom marker-icon
@@ -67,8 +70,8 @@ export function init() {
 	//alternatives:
 	//'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 
-	var maxZoomLvl = 20;
-	var viewZoomLvl = 17;
+	var maxZoomLvl = 24;
+	var viewZoomLvl = 19;
 
 	/* MAP & ROUTE SETUP */
 	
@@ -90,7 +93,7 @@ export function init() {
 	// calculate the offset
 	offset = map.getSize().x*0.14;
 	// Then move the map
-	map.panBy(new L.Point(-offset, 0), {animate: false});
+	//map.panBy(new L.Point(-offset, 0), {animate: true});
 	
 	
 	// setup streetname tooltip
@@ -145,12 +148,11 @@ export function init() {
 
 	}).addTo(map);
 	L.Routing.errorControl(routing).addTo(map);
-	startMarker.bindPopup(popup).openPopup();
+	//startMarker.bindPopup(popup).openPopup();
 	
 
-	// get route info
-
-	var deg = 60;
+	// get route info and rotate functions
+	var deg;
 	
 	var allCoords;
 	var instr;
@@ -168,7 +170,7 @@ export function init() {
 			deg = getAngle(currentLocation, nextStepCoords);
 			console.log(deg);
 
-			var testMarker = new L.marker(nextStepCoords, {icon: startIcon}).addTo(map);
+			//var testMarker = new L.marker(nextStepCoords, {icon: startIcon}).addTo(map);
 			startMarker.setLatLng(currentLocation);
 
 			var clicked = false;
@@ -178,43 +180,27 @@ export function init() {
 			compass.onclick = function() {
 				if (!clicked) {
 					map.setBearing(0); // TODO
-					map.setView(currentLocation, viewZoomLvl);
+					map.setView(currentLocation);
+					//map.panBy(new L.Point(-offset, 0), {animate: true});
 					compass.style.WebkitTransitionDuration="1s";
 					compass.style.transform = 'rotate(' + 0 + 'deg)';
+					//startMarker.setRotationOrigin('center');
 					startMarker.setRotationAngle(deg);
 					startMarker.setLatLng(currentLocation);
 					clicked = true;
 				} else {
 					map.setBearing(360 - deg); // TODO
-					map.setView(currentLocation, viewZoomLvl);
+					map.setView(currentLocation);
+					//map.panBy(new L.Point(-offset, 0), {animate: true});
 					compass.style.WebkitTransitionDuration="1s";
 					compass.style.transform = 'rotate(' + (360 - deg) + 'deg)';
+					//startMarker.setRotationOrigin('center');
 					startMarker.setRotationAngle(0);
 					startMarker.setLatLng(currentLocation);
 					clicked = false;
 				}
 			}
 	});
-
-	// var clicked = false;
-	// map.setBearing(360 - deg); // TODO
-	// compass.style.transform = 'rotate(' + deg + 'deg)';
-
-	// compass.onclick = function() {
-	// 	if (!clicked) {
-	// 		map.setBearing(0); // TODO
-	// 		map.setView(currentLocation, viewZoomLvl);
-	// 		compass.style.WebkitTransitionDuration="1s";
-	// 		compass.style.transform = 'rotate(' + 0 + 'deg)';
-	// 		clicked = true;
-	// 	} else {
-	// 		map.setBearing(deg); // TODO
-	// 		map.setView(currentLocation, viewZoomLvl);
-	// 		compass.style.WebkitTransitionDuration="1s";
-	// 		compass.style.transform = 'rotate(' + deg + 'deg)';
-	// 		clicked = false;
-	// 	}
-	// }
 
 
 	/* FILL CUSTOM INFO-BOXES*/
@@ -251,12 +237,18 @@ export function init() {
 	/* ZOOM BTNS SETUP */
 	// zoom in function
 	$(zoomInBtn).click(function(){
-		map.setZoom(map.getZoom() + 1)
+		map.setZoom(map.getZoom() + 1);
+		viewZoomLvl = map.getZoom();
 	});
 
 	// zoom out function
 	$(zoomOutBtn).click(function(){
-		map.setZoom(map.getZoom() - 1)
+		map.setZoom(map.getZoom() - 1);
+		viewZoomLvl = map.getZoom();
+	});
+
+	$(endNavBtn).click(function(){
+		app.init('start');
 	});
 
 }
@@ -287,7 +279,7 @@ function getInstrGeoJson(instr,allCoords) {
 }
 
 function getNextStepCoords(instr, allCoords) {
-	for (var i = 2; i <= 2; ++i) {
+	for (var i = 1; i <= 1; ++i) {
 		var res = {
 			lon : allCoords[instr[i].index].lng,
 			lat : allCoords[instr[i].index].lat
