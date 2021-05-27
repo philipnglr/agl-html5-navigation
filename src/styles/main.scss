@@ -42,10 +42,9 @@ html {
     float: right !important;
 }
 
-
 .row {
     margin-left: 0 !important;
-    margin-left: 0 i !important;
+    margin-left: 0 !important;
 }
 
 @keyframes blink{
@@ -58,8 +57,14 @@ html {
 
 body {
 
+    background: rgba(20, 34, 63, 0.9);
+
     .no-pd {
         padding: 0px !important;
+    }
+
+    .pd-36 {
+        padding: 36px !important;
     }
 
     .no-mg {
@@ -112,6 +117,7 @@ body {
     }
 
     .main-directions-container {
+        height: fit-content;
         margin: 36px;
         margin-bottom: 0px;
         padding-top: 36px;
@@ -123,7 +129,13 @@ body {
         border-radius: 14px 14px 0px 0px;
     }
 
+    #coming-up-direction-svg {
+        padding: 0;
+        float:left;
+    }
+
     .next-directions-container {
+        height: fit-content;
         margin: 36px;
         margin-top: 0px;
         padding-top: 20px;
@@ -133,6 +145,16 @@ body {
         background: rgba(20, 34, 63, 0.3);
         backdrop-filter: blur(13px);
         border-radius: 0px 0px 14px 14px;
+    }
+
+    .next-direction-svg-icon-container {
+        height: 50px;
+        width: 50px;
+    }
+
+    #next-direction-svg {
+        height: 100%;
+        width: 100%;
     }
 
     .navi-info {
@@ -185,13 +207,17 @@ body {
         margin-bottom: 36px;
         margin-right: 14px;
     } 
+
+    .list-group-item {
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
 }
 
 
 //leaflet specific styling
 
 .leaflet-control-scale {
-    left: 900% !important;
+    left: 736px !important;
 }
 
 .leaflet-popup-tip-container {
@@ -217,6 +243,7 @@ body {
 } 
 
 .leaflet-routing-container {
+    display: none;
     color: white;
     background-color: transparent !important;
     padding: 0 !important;
@@ -234,4 +261,54 @@ body {
 
 .leaflet-routing-alt table tbody tr td:first-child {
     filter: invert(100%);
+}
+
+.icon-class {
+    // -webkit-background-size: 300px 300px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    // margin: 0;
+    content: '';
+    display: inline-block;
+    // vertical-align: top;
+    width: 70px;
+    height: 70px;
+    //background-color: red;
+    // background-position: 0 0;
+}
+
+.icon-continue {
+    background-image: url('../../src/images/continue.png');
+}
+
+.icon-sharpright {
+    background-image: url('../../src/images/r-sharp.png');
+}
+
+.icon-turnright {
+    background-image: url('../../src/images/r.png');
+}
+
+.icon-bearright {
+    background-image: url('../../src/images/r-bear.png');
+}
+
+.icon-uturn {
+    background-image: url('../../src/images/uturn.png');
+}
+
+.icon-sharpleft {
+    background-image: url('../../src/images/l-sharp.png');
+}
+
+.icon-turnleft {
+    background-image: url('../../src/images/l.png');
+}
+
+.icon-bearleft {
+    background-image: url('../../src/images/l-bear.png');
+}
+
+.icon-roundabout {
+    background-image: url('../../src/images/roundabout.png');
 }

@@ -6,33 +6,46 @@ import { lowcan } from 'agl-js-api';
 import * as cl from '../js/choose-location';
 
 var template;
-var page = {
-    speed: 0,
-    tires: {
-        front: {
-            left: 21,
-            right: 22
-        },
-        rear: {
-            left: 23,
-            right: 24
+var destinations = {
+    1 : {
+        address: "Alteburgstraße 150, 72762 Reutlingen",
+        coordinates: {
+            lon: 9.187079162622133,
+            lat: 48.482017871145885,
         }
     },
-    rpm: {
-        value: 0,
-        percent: 0
+    2 : {
+        address: "Arnulf-Klett-Platz 2, 70173 Stuttgart",
+        coordinates: {
+            lon: 9.182450727654725,
+            lat: 48.7835171891779,
+        }
     },
-    isWarning: true,
-    fuel: {
-        percent: 75,
-        level: 14,
-        range: 650,
-        avg: 25.5
+    3 : {
+        address: "Sonnenallee 187-181, 12059 Berlin",
+        coordinates: {
+            lon: 13.451202,
+            lat: 52.476274,
+        }
+    },
+    4 : {
+        address: "Zeil 26, 60313 Frankfurt am Main", 
+        coordinates: { 
+            lon: 8.691384152826528,
+            lat: 50.115027852320814,
+        }
+    },
+    5 : {
+        address: "Müllerstraße 23, 80469 München",
+        coordinates: {
+            lon: 11.57113295977992,
+            lat: 48.1310746676724,
+        }
     }
-};
+}
 
 export function show() {
-    document.body.innerHTML = Mustache.render(template, page);
+    document.body.innerHTML = Mustache.render(template, destinations);
 }
 
 export function init(template_name) {
@@ -60,13 +73,13 @@ export function init(template_name) {
         Mustache.parse(template);
         show();
         if (template_name == 'start') {
-            loadStartPage();
+            cl.init();
         }
     }, function(error) {
         console.error('ERRROR loading main template', error);
     });
 }
 
-export function loadStartPage(){
-    cl.init();
-} 
+export function getDestinations() {
+    return destinations;
+}

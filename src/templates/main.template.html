@@ -9,33 +9,51 @@
     <!--CONTENT-->
     <div class="content no-mg">
         
+
         <!--1. Row-->
         <div class="row justify-content-between">
-            
-            <!--Main-Directions-Container-->
-            <div class="col-4 main-directions-container">
-                <div id="coming-up-direction">
-                    <!-- <div class="row">
-                        <div class="col-4">
-                            <span id="coming-up-direction-svg"> </span>
+        
+            <div class="col-4 no-mg no-pd">
+
+                <!--Coming-Up-Directions-Container-->
+                <div class="row no-mg no-pd">
+                    <div id="coming-up-direction" class="col-12 main-directions-container">
+                        <div class="row">
+                            <div class="col-4">
+                                <span id="coming-up-direction-svg"></span>
+                            </div>
+                            <div class="col-8">
+                                <span id="coming-up-direction-distance" class="fs-46 fw-extrabold"></span>
+                            </div>
                         </div>
-                        <div class="col-8">
-                            <span id="coming-up-direction-distance" class="fs-46 fw-extrabold">5,4 km</span>
+                        <div class="row">
+                            <div class="col-12">
+                                <span id="coming-up-direction-description" class="fs-22 fw-normal block"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <span id="coming-up-direction-description" class="fs-22 fw-normal block">gerade aus</span>
-                            <span class="fs-22 fw-normal block">Alteburgstraße</span>
-                        </div>
-                    </div> -->
                 </div>
+                
+                <!--Next-Directions-Container-->
+                <div class="row no-mg no-pd">    
+                    <div id="next-direction" class="col-12 next-directions-container">
+                        <div class="row">
+                            <div class="col-3 next-direction-svg-icon-container">
+                                <span id="next-direction-svg"></span>
+                            </div>
+                            <div class="col-9">
+                                <span id="next-direction-description" class="fs-18 fw-normal block"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!--Close-Button-->
             <div class="col-2 close-btn">
                 <div class="row justify-content-end">
-                    <div id="endNavBtn" class="btn">
+                    <div onclick="app.init('start')" id="endNavBtn" class="btn">
                         <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M30.375 3.62125L27.3788 0.625L15.5 12.5038L3.62125 0.625L0.625 3.62125L12.5038 15.5L0.625 27.3788L3.62125 30.375L15.5 18.4962L27.3788 30.375L30.375 27.3788L18.4962 15.5L30.375 3.62125Z" fill="#B31010"/>
                         </svg>
@@ -43,6 +61,8 @@
                 </div>
 
                 <div class="row justify-content-end mt-5">
+                     
+                    <!--Zoom-In-Button-->
                     <div class="close-btn">
                         <div id="in" class="zoom-btn">
                             <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,6 +70,8 @@
                             </svg>
                         </div>
                     </div>
+
+                    <!--Zoom-Out-Button-->
                     <div class="close-btn">
                         <div id="out" class="zoom-btn">
                             <svg width="21" height="7" viewBox="0 0 21 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,24 +83,6 @@
 
             </div>
         </div>
-
-
-        <!--2. Row-->
-        <!-- <div class="row justify-content-between">
-            
-            Next-Directions-Container
-            <div id="next-direction" class="col-4 next-directions-container">
-                <div class="row">
-                    <div class="col-3">
-                        <span><--</span>
-                    </div>
-                    <div class="col-9">
-                        <span class="fs-18 fw-normal block">danach links abbiegen</span>
-                        <span class="fs-18 fw-normal block">Hauptstraße</span>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 
 
         <!--3. Row-->
