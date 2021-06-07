@@ -57,6 +57,7 @@ html {
 
 body {
 
+    font-family: 'Inter', sans-serif;
     background: rgba(20, 34, 63, 0.9);
 
     .no-pd {
@@ -211,6 +212,19 @@ body {
     .list-group-item {
         border: 1px solid rgba(255, 255, 255, 0.6);
     }
+
+
+    .list-group-item:hover {
+        border-radius: 10px;
+        background: rgba(255,255,255,0.3);
+        border: none;   
+    }
+
+    .list-group-item:active {
+        border-radius: 10px;
+        background: rgba(255,255,255,0.6);
+        border: none;   
+    }
 }
 
 
@@ -311,4 +325,10 @@ body {
 
 .icon-roundabout {
     background-image: url('../../src/images/roundabout.png');
+}
+
+.icon-arrive {
+    background: url('../../src/images/destination.png');
+    filter: brightness(0) invert(1);
+    background-repeat: no-repeat;
 }

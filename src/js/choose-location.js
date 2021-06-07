@@ -11,10 +11,31 @@ export function init() {
             $.ajax({
                 url: app.init('main'),
                 success: function() {
-                    map.init(destinations[event.target.id].coordinates);
+                    initMap(updateRouteAndMap, destinations[event.target.id].coordinates);
+                    //TODO: send coorinates to instrument cluster
                 }
             });
         }
     });
+}
 
+function initMap(callback, destinationCoords) {
+    var coord = destinationCoords;
+    console.log("Start-emplate loaded succesfully.");
+    $.ajax({
+        url: map.init(coord),
+        success: function() {
+            console.log("Map init done.");
+            callback();
+        }
+    });
+}
+
+function updateRouteAndMap() {
+    $.ajax({
+        url: map.update(),
+        success: function() {
+            console.log("Map update done."); 
+        }
+    });
 }
