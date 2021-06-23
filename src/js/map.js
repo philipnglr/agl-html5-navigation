@@ -699,9 +699,10 @@ function displayDirectionsArrow(container, ic) {
  */
 export function getCurrentLocation() {
 	//TODO: get real location data from AGL by subscribing to can low level call for vehical position. Make sure to recieve answer in LatLng format and return it.
-	return { 
+	var currentLatLng = { 
 		//Reutlingen
 		lon: 9.179757,
 		lat: 48.475318
-	}
+	};
+	return currentLatLng;
 }
