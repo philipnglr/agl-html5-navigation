@@ -6,6 +6,10 @@ import { lowcan } from 'agl-js-api';
 import * as cl from '../js/choose-location';
 
 var template;
+
+// all displayed destinations. 
+// To add more make sure to add lines in start.template.html. Or simply change adresses and correlating coordinates in here.
+// TODO: For very future work: implement a solution to for a user input for adresses. Best case: Geocoded solutions with autocomplete feature for users.
 var destinations = {
     1 : {
         address: "Alteburgstraße 150, 72762 Reutlingen",
@@ -44,10 +48,20 @@ var destinations = {
     }
 }
 
+
+/**
+ * Inserts moustache template into <body> element of index.html
+ */
 export function show() {
     document.body.innerHTML = Mustache.render(template, destinations);
 }
 
+
+/**
+ * Takes name of template and after a few error checks renders that template.
+ * Note: predefined from AGL html5 dashboard - only adjusted to call cl.init() of loaded template is start.template.html
+ * @param {String} template_name 
+ */
 export function init(template_name) {
     lowcan.list().then( function( result ) {
         console.log(result.length);
@@ -80,6 +94,11 @@ export function init(template_name) {
     });
 }
 
+
+/**
+ * Returns destination coordinates as LatLng.
+ * @returns destination coordinates as LatLng
+ */
 export function getDestinations() {
     return destinations;
 }

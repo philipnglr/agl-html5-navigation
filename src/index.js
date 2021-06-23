@@ -19,12 +19,12 @@ import * as app from './js/app';
 import { api } from 'agl-js-api';
 import './leaflet/leaflet-src';
 import * as map from './js/map';
-import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine'; // routing machine for drawing route etc.
+import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine';
 import './leaflet-routing-machine-3.2.12/examples/Control.Geocoder';
 import './js/leaflet.rotatedMarker';
 
 /* CSS */
-import './styles/app.scss'; //import style sheets
+import './styles/app.scss';
 import './leaflet/leaflet.css';
 import './leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.css';
 

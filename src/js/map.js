@@ -19,15 +19,16 @@ var zoomOutBtn;
 var mapcontainer;
 var map;
 
-var tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png';
+var tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	// alternatives: 
-	//https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png 
-	//https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png
-	//https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+	//https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png 	// Carto map tiles - might cost money
+	//https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png 	// Carto map tiles - might cost money
+	//https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png 	// OSM map tiles - free
 
-var attr = 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
+var attr = 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>';
 	// alternatives:
-	//'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+	//'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>' 	// for OSM map tiles
+	//'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>' 	// for Carto map tiles
 
 var startIcon, destinationIcon;
 var startMarker, destinationMarker;
@@ -51,19 +52,21 @@ var nextStepCoords = null;
 var currentLocation;
 var destinationLocation;
 var allCoords;
-var comingUpDescription; //instruction text
-var comingUpDistance, comingUpDistanceFormatted; //distance
-var comingUpIcon; //icon text
-//var roadName; //name of road
+var comingUpDescription; 
+var comingUpDistance, comingUpDistanceFormatted; 
+var comingUpIcon; 
 var nextDescription;
 var nextIcon;
 var formatter;
 var clicked = false;
 
-var intervalId;
+var intervalId = null;
 
 
-
+/**
+ * Initializes all containers to be filles with meta date. Initializes Map and Buttons. Defines custom markers. Resets update interval. Instantiates route and calls update function.
+ * @param {LatLong} destinationCoords 
+ */
 export function init(destinationCoords) {
 
 	/* Initialize all containers */
@@ -83,13 +86,11 @@ export function init(destinationCoords) {
 	nextDirectionSVGContainer = document.getElementById('next-direction-svg');
 	nextDirectionDescriptionContainer = document.getElementById('next-direction-description');
 
+	intervalId = null;
 	
 	/* Set start and destination location */
-	currentLocation = { //TODO: get real location data from AGL
-		//Reutlingen
-		lon: 9.20427,
-		lat: 48.49144
-	};
+	currentLocation = getCurrentLocation();
+	
 	destinationLocation = destinationCoords;
 
 	/* Set custom marker-icons */
@@ -115,6 +116,8 @@ export function init(destinationCoords) {
 		removeRouting(routing);
 		endUpdate();
 		app.init('start');
+		map = null;
+		// TODO: send end-signal to instrument cluster 
 	});
 
 	/* Set zoom buttons */
@@ -136,9 +139,13 @@ export function init(destinationCoords) {
 	/* Set up routing service */
 	routingPerformer();
 
+	console.log("initMap() fully loaded.");
 }
 
 
+/**
+ * Updates the map and the route. Displays new map and route after update.
+ */
 export function update() {
 
 	// TODO: Future work: dont use time interval as update trigger, set CAN-BUS listener instead
@@ -147,33 +154,40 @@ export function update() {
 
 	intervalId = setInterval(function() {
 
-		currentLocation = { // TODO update simulator location here as described above
-			lon: (5*currentLocation.lon + 5*destinationLocation.lon)/10, //simulate movement in map
-			lat: (5*currentLocation.lat + 5*destinationLocation.lat)/10
-		};
+		// use the code below to not update the route for the next step, but to update in a straight line towards the destination.
+		// currentLocation = { 
+		// 	lon: (5*currentLocation.lon + 5*destinationLocation.lon)/10, //simulate movement in map
+		// 	lat: (5*currentLocation.lat + 5*destinationLocation.lat)/10
+		// };
+
+		currentLocation = nextStepCoords;
 
 		clicked = false;
-		
-		//Routing service
-		routingPerformer();
 
-		//refresh map
-		refreshMap();
-
+		$.ajax({
+			url: routingPerformer(),
+			success: refreshMap()
+		});
 
 		console.log("view zoom level: " + viewZoomLvl);
 		console.log("Map update() ran once."); 
 	  }, 6000);
-
 }
 
 
+/**
+ * Ends update interval.
+ */
 function endUpdate() {
 	clearInterval(intervalId);
-	UpdateintervalId = null;
+	intervalId = null;
+	console.log("endUpdate() ran once.");
 }
 
 
+/**
+ * Initially sets up map and puts it into mapcontainer and sets up scale.
+ */
 function launchMap() {
 	if (mapcontainer) {
 		map = L.map(mapcontainer, {zoomControl: false, rotate: true}).setView(currentLocation, viewZoomLvl);
@@ -184,24 +198,29 @@ function launchMap() {
 			attribution: attr,
 		}).addTo(map);
 	
-		
 	} else {
 		console.log("Konnte div mapid nicht finden.");
 	}
 
-	// setup streetname tooltip
-	//popup = L.popup({closeButton: false, className: "street-label"}).setContent(street);
-
 	// setup scale
 	scale = L.control.scale().addTo(map);
+
+	console.log("launchMap() ran once.");
 }
 
 
+/**
+ * Refreshes map view.
+ */
 function refreshMap() {
 	map.setView(startMarker.getLatLng(), viewZoomLvl);
+	console.log("refreshMap() ran once."); 
 }
 
 
+/**
+ * Resets current route. Instantiates new route and connects it to map. Sets up compass onclick functionality. Finds all meta data for route and fills the correlating containers.
+ */
 function routingPerformer() {
 	
 	if (startMarker) {
@@ -210,13 +229,14 @@ function routingPerformer() {
 
 	removeRouting(routing);
 
+	// TODO: find a way to instantiate a L.Routing.control without leaflet sending out very own http-requests to OSRM Test Server
+	// TODO: instead make L.Routing.control send out only waypoints to the custom navigation-algorithm-AGL-service and make it recieve a GeoJSON from that service as a response
+	// Note: might need to adjust leaflet to do so
 	routing = L.Routing.control({
 		waypoints: [
 			L.latLng(currentLocation.lat, currentLocation.lon),
 			L.latLng(destinationLocation.lat, destinationLocation.lon)
 		],
-
-		//geocoder: L.Control.Geocoder.nominatim(),
 
 		createMarker: function(i, wp, nWps) {
 			if (i === 0) {
@@ -290,32 +310,28 @@ function routingPerformer() {
 		map.setBearing(360 - deg);
 		compass.style.transform = 'rotate(' + (360 - deg) + 'deg)';
 
-
 		//set compass on click function
 		compass.onclick = function() {
 			if (!clicked) {
-				map.setBearing(0); // TODO
+				// TODO: fix marker rotation issues when compass is clicked
+				map.setBearing(0);
 				map.setView(currentLocation);
-				//map.panBy(new L.Point(-offset, 0), {animate: true});
 				compass.style.WebkitTransitionDuration="1s";
 				compass.style.transform = 'rotate(' + 0 + 'deg)';
-				//startMarker.setRotationOrigin('center');
 				startMarker.setRotationAngle(deg);
 				startMarker.setLatLng(currentLocation);
 				clicked = true;
 			} else {
-				map.setBearing(360 - deg); // TODO
+				// TODO: fix marker rotation issues when compass is clicked
+				map.setBearing(360 - deg);
 				map.setView(currentLocation);
-				//map.panBy(new L.Point(-offset, 0), {animate: true});
 				compass.style.WebkitTransitionDuration="1s";
 				compass.style.transform = 'rotate(' + (360 - deg) + 'deg)';
-				//startMarker.setRotationOrigin('center');
 				startMarker.setRotationAngle(0);
 				startMarker.setLatLng(currentLocation);
 				clicked = false;
 			}
 		}
-
 
 		//fill coming up directions container with content
 		//description
@@ -323,13 +339,12 @@ function routingPerformer() {
 			comingUpDirectionDescriptionContainer = document.getElementById('coming-up-direction-description');
 			
 			if (comingUpDirectionDescriptionContainer) {
-				comingUpDescription = formatter.formatInstruction(instr[1]); //choose 1st element, not 0th, because the first one is always "go to XXX street" without icon!
+				comingUpDescription = formatter.formatInstruction(instr[1]); 
 				comingUpDirectionDescriptionContainer.innerHTML = comingUpDescription;
 			} else {
 			setTimeout(loadComingUpDirectionDescription(), 1000);
 			}
 		}
-		//loadComingUpDirectionDescription();
 
 		//distance
 		function loadComingUpDirectionDistance() {
@@ -337,13 +352,12 @@ function routingPerformer() {
 
 			if (comingUpDirectionDistanceContainer) {
 				comingUpDistance = instr[1].distance;
-				comingUpDistanceFormatted = formatter.formatDistance(comingUpDistance); //format dis into a better string with unit
-				comingUpDirectionDistanceContainer.innerHTML = comingUpDistanceFormatted; //TODO get_our_distance(); //
+				comingUpDistanceFormatted = formatter.formatDistance(comingUpDistance); 
+				comingUpDirectionDistanceContainer.innerHTML = comingUpDistanceFormatted;
 			} else {
 				setTimeout(loadComingUpDirectionDistance(), 1000);
 			}
 		}
-		//loadComingUpDirectionDistance();
 
 		//icon
 		function loadComingUpDirectionIcon() {
@@ -356,7 +370,6 @@ function routingPerformer() {
 				setTimeout(loadComingUpDirectionIcon(), 1000);
 			}
 		}
-		//loadComingUpDirectionIcon();
 		
 
 		//fill next directions container with content
@@ -371,7 +384,6 @@ function routingPerformer() {
 				setTimeout(loadNextDirectionDescription(), 1000);
 			}
 		}
-		//loadNextDirectionDescription();
 
 		//icon 
 		function loadNextDirectionIcon() {
@@ -384,10 +396,9 @@ function routingPerformer() {
 				setTimeout(loadNextDirectionIcon(), 1000);
 			}
 		}
-		//loadNextDirectionIcon();
 
 
-		if (instr.length <= 2) { //ziel erreicht
+		if (instr.length <= 2) { // if destination reached
 			loadComingUpDirectionDistance();
 			loadComingUpDirectionDescription();
 			loadComingUpDirectionIcon();
@@ -396,7 +407,6 @@ function routingPerformer() {
 			document.getElementById('next-direction').style.display = "none";
 
 			endUpdate();
-
 		} else {
 			loadComingUpDirectionDistance();
 			loadComingUpDirectionDescription();
@@ -406,19 +416,33 @@ function routingPerformer() {
 			loadNextDirectionIcon();
 		}
 
+		console.log("routingPerformer() ran once.");
+
+		refreshMap();
 	});
 
 }
 
 
+/**
+ * Removes routing and resets routing control layer on map.
+ * @param {L.Routing.control} routing 
+ */
 function removeRouting(routing) {
 	if (routing != null) {
 		map.removeControl(routing);
 		routing = null;
 	}
+	console.log("removeRouting() ran once.");
 }
 
-
+/**
+ * Takes instructions array and coordinates array from route summary and returns the data correctly formatted as a GeoJSON.
+ * Note: Helper function - not in use.
+ * @param {Array} instr 
+ * @param {Array} allCoords 
+ * @returns route instructions as GeoJSON
+ */
 function getInstrGeoJson(instr,allCoords) {
 	var formatter = new L.Routing.Formatter();
 	var instrPts = {
@@ -445,6 +469,12 @@ function getInstrGeoJson(instr,allCoords) {
 }
 
 
+/**
+ * Takes instructions array and coordinates array from route summary and returns the coordinates for the routes next step instructions as LatLng.
+ * @param {Array} instr 
+ * @param {Array} allCoords 
+ * @returns the coordinates for the routes next step instructions as LatLng
+ */
 function getNextStepCoords(instr, allCoords) {
 	for (var i = 1; i <= 1; ++i) {
 		var res = {
@@ -457,6 +487,11 @@ function getNextStepCoords(instr, allCoords) {
 }
 
 
+/**
+ * Takes the seconds needed for the route, computes the amount of hours, minutes and seconds and returns them as JSON.
+ * @param {Int or Long} d (date)
+ * @returns hours, minutes and seconds as JSON
+ */
 function secondsToHm(d) {
 	d = Number(d);
 	const h = Math.floor(d / 3600);
@@ -471,6 +506,13 @@ function secondsToHm(d) {
 }
 
 
+/**
+ * Takes hours, minutes and seconds as Int and returns a formatted string for duration of the route.
+ * @param {Int} hours 
+ * @param {Int} minutes 
+ * @param {Int} seconds 
+ * @returns formatted string for duration of the route
+ */
 function formatDuration(hours, minutes, seconds) {
 	if (hours == 0 && minutes != 0) {
 		return minutes + " min";
@@ -482,6 +524,13 @@ function formatDuration(hours, minutes, seconds) {
 }
 
 
+/**
+ * Takes hours, minutes and seconds as Int and returns a formatted string for the time of arrival.
+ * @param {Int} hours 
+ * @param {Int} minutes 
+ * @param {Int} seconds 
+ * @returns formatted string for the time of arrival
+ */
 function formatArrivalTime(hours, minutes, seconds) {
 	var date = new Date();
 	var h = date.getHours();
@@ -521,6 +570,12 @@ function formatArrivalTime(hours, minutes, seconds) {
 }
 
 
+/**
+ * Computes the angle for the line between two given coordinates A and B.
+ * @param {LatLng} A 
+ * @param {LatLng} B 
+ * @returns angle as Int
+ */
 function getAngle(A, B){
 	var angle = null;
 	var latA = A.lat;
@@ -528,7 +583,6 @@ function getAngle(A, B){
 	var latB = B.lat;
 	var lonB = B.lon;
 
-	// 注意经度或者纬度相等 (when longitude or latitude is equal)
 	if(lonA == lonB && latA>latB ){
 		angle = Math.PI;
 	}
@@ -542,7 +596,6 @@ function getAngle(A, B){
 		angle = Math.PI/2	;
 	}
 
-	// 注意经度或者纬度都不相等 (Longitude and latitude are not equal)
 	else{
 		var x1 = A.lat*Math.pow(10,12);
 		var x2 = B.lat*Math.pow(10,12);
@@ -552,14 +605,17 @@ function getAngle(A, B){
 	}
 
 	angle = angle / (2 * Math.PI) * 360;
-	// angle = 360 - angle;
 
 	return angle;
 }
 
 
+/**
+ * Clears the correlating container and fills it with the suiting icon for each routeing step instruction.
+ * @param {innerHTML} container 
+ * @param {String} ic (routing step instruction name) 
+ */
 function displayDirectionsArrow(container, ic) {
-	
 	//first reset icons
 	container.classList.remove("icon-class");
 	container.classList.remove("icon-continue");
@@ -572,54 +628,80 @@ function displayDirectionsArrow(container, ic) {
 	container.classList.remove("icon-bearleft");
 	container.classList.remove("icon-roundabout");
 
-	//load suitable icon and send CAN signal for LED stuff
+	//load suitable icon
+	// TODO: send CAN signal for LED animation for each case
 	switch (ic) {
 		case 'continue':		 	
 			container.classList.add("icon-class");
 			container.classList.add("icon-continue");
-			//TODO trigger 
+			//TODO: LED-trigger 
 			break;
 
 		case 'enter-roundabout':
 			container.classList.add("icon-class");
 			container.classList.add("icon-roundabout");
+			//TODO: LED-trigger 
 			break;
 
 		case 'bear-right':		 	
 			container.classList.add("icon-class");
 			container.classList.add("icon-bearright");
+			//TODO: LED-trigger 
 			break;
 
 		case 'turn-right':
 			container.classList.add("icon-class");
 			container.classList.add("icon-turnright");
+			//TODO: LED-trigger 
 			break;
 
 		case 'sharp-right':
-			comingUpDirectionSVGContainer.classList.add("icon-class");
-			comingUpDirectionSVGContainer.classList.add("icon-sharpright");
+			container.classList.add("icon-class");
+			container.classList.add("icon-sharpright");
+			//TODO: LED-trigger 
 			break;
 
 		case 'u-turn':
-			comingUpDirectionSVGContainer.classList.add("icon-class");
-			comingUpDirectionSVGContainer.classList.add("icon-uturn");
+			container.classList.add("icon-class");
+			container.classList.add("icon-uturn");
 			break;
 
 		case 'sharp-left':
-			comingUpDirectionSVGContainer.classList.add("icon-class");
-			comingUpDirectionSVGContainer.classList.add("icon-sharpleft");
+			container.classList.add("icon-class");
+			container.classList.add("icon-sharpleft");
+			//TODO: LED-trigger 
 			break;
 
 		case 'turn-left':
 			container.classList.add("icon-class");
 			container.classList.add("icon-turnleft");
+			//TODO: LED-trigger 
 			break;
+
 		case 'bear-left':		 	
 			container.classList.add("icon-class");
 			container.classList.add("icon-bearleft");
+			//TODO: LED-trigger 
 			break;
+
 		case 'arrive':
 			container.classList.add("icon-class");
 			container.classList.add("icon-arrive");
+			//TODO: LED-trigger 
+			break;
+	}
+}
+
+
+/**
+ * Returns the LatLng of current vehicle location.
+ * @returns LatLng of current vehicle location
+ */
+export function getCurrentLocation() {
+	//TODO: get real location data from AGL by subscribing to can low level call for vehical position. Make sure to recieve answer in LatLng format and return it.
+	return { 
+		//Reutlingen
+		lon: 9.179757,
+		lat: 48.475318
 	}
 }
