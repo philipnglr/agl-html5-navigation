@@ -20,6 +20,7 @@
       </ul>
     </li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#future-work">Future Work</a></li>
   </ol>
 </details>
 
@@ -96,6 +97,12 @@ To get a local copy up and running follow these steps:
    ```sh
    reboot
    ```
+
+### Future Work
+
+Open src folder and search for "TODO: " inside app.js, choose-location.js and map.js. 
+You will find To-Do's with detailed description about future work and how to set up the navigation application together with the other parts. 
+Ignore all other To-Do's since these are from leaflet versions. These are out of scope for the project provided.
 
 
 <!-- CONTACT -->
