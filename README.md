@@ -50,6 +50,7 @@ This repository is about the AGL navigation application for the central console 
 * [Leaflet](https://leafletjs.com/) vanilla
 * [Leaflet](https://github.com/ronikar/Leaflet) extended by GitHub user ronikar
 * [Leaflet Routing Machine](https://www.liedman.net/leaflet-routing-machine/)
+* [Leaflet Rotatable Marker](https://github.com/bbecquet/Leaflet.RotatedMarker/blob/master/leaflet.rotatedMarker.js) extended by GitHub user bbecquet
 * [Node JS](https://nodejs.org)
 * [Webpack JS](https://webpack.js.org/)
 
